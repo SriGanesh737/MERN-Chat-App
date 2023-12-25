@@ -67,7 +67,7 @@ const fetchChats = asyncHandler(async(req,res)=>{
 });
 
 const createGroupChat = asyncHandler(async(req,res)=>{
-  if(!req.body.users || !req.body.chatName){
+  if(!req.body.users || !req.body.name){
     res.status(400)
     throw new Error('Please provide all the fields')
   }
@@ -81,12 +81,11 @@ const createGroupChat = asyncHandler(async(req,res)=>{
 
   try{
     const groupChat = await Chat.create({
-      chatName: req.body.chatName,
+      chatName: req.body.name,
       isGroupChat: true,
       users: users,
       groupAdmin: req.user,
     });
-
     const FullChat = await Chat.findById(groupChat._id)
     .populate('users','-password')
     .populate('groupAdmin','-password');
@@ -138,7 +137,7 @@ const addToGroup = asyncHandler(async(req,res)=>{
   ).populate('users','-password')
   .populate('groupAdmin','-password');
 
-  console.log(added);
+
   if(!added){
     res.status(400)
     throw new Error('Chat not found')
